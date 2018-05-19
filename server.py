@@ -14,20 +14,24 @@ class TestHandler(http.server.SimpleHTTPRequestHandler):
 		print(self.headers)
 		length = int(self.headers.get_all('content-length')[0])
 		print(self.headers.get_all('content-length'))
-		data_string = self.rfile.read(length)
+		data_string = (self.rfile.read(length)).decode("utf-8")
 		print(data_string)
 		self.send_response(200)
 		self.send_header("Content-type", "text/plain")
 		self.end_headers()
 		self.flush_headers()
 		tab = list()
-		for i in range(8):
-			tab.append(str(round(random.random(),2)))
-
-		json = '{"nbtab":4, "tab":['+tab[0]+','+tab[1]+','+tab[2]+','+tab[3]+'], "tab2":['+tab[4]+','+tab[5]+','+tab[6]+','+tab[7]+']}'
-		"""nbtab correspond au nombre de bandes de fréquences différente"""
+		if(data_string == "400-500"):
+			for i in range(18):
+				tab.append(str(round(random.random(),2)))
+			json = '{"nbtab":2, "tabs":[ ['+tab[0]+','+tab[1]+','+tab[2]+','+tab[3]+','+tab[4]+','+tab[5]+'], [ '+tab[6]+','+tab[7]+','+tab[8]+','+tab[9]+','+tab[10]+','+tab[11]+'] ]}'
+			"""nbtab correspond au nombre de bandes de fréquences différente"""
+		elif(data_string == "800-900"):
+			for i in range(18):
+				tab.append(str(round(random.random(),2)))
+			json = '{"nbtab":3, "tabs":[ ['+tab[0]+','+tab[1]+','+tab[2]+','+tab[3]+','+tab[4]+','+tab[5]+'], [ '+tab[6]+','+tab[7]+','+tab[8]+','+tab[9]+','+tab[10]+','+tab[11]+'], [ '+tab[12]+','+tab[13]+','+tab[14]+','+tab[15]+','+tab[16]+','+tab[17]+']]}'
+			"""nbtab correspond au nombre de bandes de fréquences différente"""
 		self.wfile.write(str(json).encode())
-		time.sleep(0.2)
 
 def start_server():	
 	"""Start the server."""
