@@ -59,8 +59,6 @@ function xml_http_post(url, datas) {
 				for(var i=0;i<nbtab;i++){
 					data[i].push(listobjet[i]);
 				}
-				/*data.push(listobjet);
-				data2.push(listobjet2);*/
 				listcolor.unshift(rgb);
 				r = r+35;
 				g = g+35;
@@ -109,7 +107,7 @@ function printtest(){
 	document.getElementById("test").innerHTML = document.getElementById("content").innerHTML
 }
 
-document.getElementById("runButton").onclick = function(){runbuttonfunc("400-500");}
-document.getElementById("runButton2").onclick = function(){runbuttonfunc("800-900");}
-document.getElementById("runButton3").onclick = function(){runbuttonfunc("2400-2500");}
+document.getElementById("runButton").onclick = function(){runbuttonfunc("400,500");}
+document.getElementById("runButton2").onclick = function(){runbuttonfunc("800,900");}
+document.getElementById("runButton3").onclick = function(){runbuttonfunc("2400,2500");}
 
