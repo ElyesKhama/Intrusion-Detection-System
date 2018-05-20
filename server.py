@@ -1,7 +1,7 @@
 import http.server
 import random
 import time
-
+"""NE PAS OUBLIER DE LANCER LE SCRIPT QUI GENERE LES VALEURS DANS LES FICHIERS -___- """
 FILE = 'visu.html'
 PORT = 8000
 
@@ -18,6 +18,7 @@ class TestHandler(http.server.SimpleHTTPRequestHandler):
 		data_string = (self.rfile.read(length)).decode("utf-8")
 		print(data_string)
 		tab = charge_fichier()
+		print(tab)
 		"""print(tab)"""
 		self.send_response(200)
 		self.send_header("Content-type", "text/plain")
@@ -27,13 +28,50 @@ class TestHandler(http.server.SimpleHTTPRequestHandler):
 		self.wfile.write(str(json).encode())
 
 def createJson(tab, data):
-	if(data == "400,500"):
-		json = '{"nbtab":1, "tabs":[ ['+tab[0][1]+','+tab[0][2]+','+tab[0][3]+','+tab[0][4]+','+tab[0][5]+','+tab[0][2]+']]}'
-	elif(data == "800,900"):
-		json = '{"nbtab":1, "tabs":[ ['+tab[1][1]+','+tab[1][2]+','+tab[1][3]+','+tab[1][4]+','+tab[1][5]+','+tab[1][6]+']]}'
-	"""nbtab correspond au nombre de bandes de fréquences différente"""
-	return json
+	index = -1
+	nb_bande = -1
+	if(data == "400-500"):
+		index = 0
+		nb_bande = 1
+	elif(data == "800-900"):
+		index = 1
+		nb_bande = 1
+	elif(data == "2400-2500"):
+		index = 2
+		nb_bande = 1
+	elif(data == "WiFi"):
+		index = 19
+		nb_bande = 3
+	elif(data == "ZigBee"):
+		index = 3
+		nb_bande = 8
+	elif(data == "Bluetooth/BLE"):
+		index = 4
+		nb_bande = 8
 
+	json = '{"nbtab":'+str(nb_bande)+', "tabs":['
+
+	for i in range(nb_bande):
+		val_max = abs(round(float(tab[index][1]),2))
+		val_min = abs(round(float(tab[index][2]),2))
+		val_mean = abs(round(float(tab[index][3]),2))
+		val_median = abs(round(float(tab[index][4]),2))
+		val_std = abs(round(float(tab[index][5]),2))
+		val_sum = abs(round(float(tab[index][6]),2)/1000000)
+		json = json + '['+str(val_max) +','+str(val_min)+','+str(val_mean)+','+str(val_median)+','+str(val_std)+','+str(val_sum)+']'
+		if(i != nb_bande-1):
+			json = json + ','
+		if(data == "WiFi"):
+			index = index + 1
+		elif((data == "ZigBee") | (data == "Bluetooth/BLE")):
+			index = index + 2
+	
+	json = json + ']}'
+
+	"""json = '{"nbtab":1, "tabs":[ ['+str(val_max) +','+str(val_min)+','+str(val_mean)+','+str(val_median)+','+str(val_std)+','+str(val_sum)+']]}'"""
+	"""nbtab correspond au nombre de bandes de fréquences différente"""
+
+	return json
 
 def start_server():	
 	"""Start the server."""

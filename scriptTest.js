@@ -16,7 +16,7 @@ var color = d3.scale.ordinal().range([rgb]);
 var selectButton = 0;
 var first;
 var radarChart = [];
-
+var newSpan = [];
 
 var radarChartOptions = {   //options for radar
 	w: width,
@@ -43,7 +43,8 @@ function xml_http_post(url, datas) {
 			var listobjet = [];
 			if(first == true){
 				 prepareData(nbtab);
-				 prepareChart(nbtab);
+				 //prepareChart(nbtab);
+				addCharts(nbtab);
 			}
 			for(var i=0;i<nbtab;i++){
 				listobjet[i] = [
@@ -60,9 +61,7 @@ function xml_http_post(url, datas) {
 					data[i].push(listobjet[i]);
 				}
 				listcolor.unshift(rgb);
-				r = r+35;
-				g = g+35;
-				rgb = "rgb("+r+","+g+","+b+")";
+				updateColor();
 				compteur++;
 			}
 			else{
@@ -73,12 +72,27 @@ function xml_http_post(url, datas) {
 			}
 			radarChartOptions.color = d3.scale.ordinal().range(listcolor);
 			for(var i=0; i<nbtab; i++){
-				RadarChart(radarChart[i], data[i], radarChartOptions);
+				//RadarChart(radarChart[i], data[i], radarChartOptions);
+				RadarChart(newSpan[i], data[i], radarChartOptions);
 			}
 			first = false;
 			}
 	}
 req.send(datas);
+}
+
+function resetColor(){
+	compteur = 0;
+	r = 5;
+	g = 0;
+	b = 255;
+	rgb = "rgb("+r+","+g+","+b+")";
+}
+
+function updateColor(){
+	r = r+35;
+	g = g+35;
+	rgb = "rgb("+r+","+g+","+b+")";
 }
 
 function prepareData(nbtab){
@@ -95,8 +109,10 @@ function prepareChart(nbtab){
 
 function runbuttonfunc(bande) {		//clique du bouton
 	first = true;
+	resetColor();
+	removeCharts();
 	window.clearInterval(intervalID);
-	intervalID = window.setInterval(function(){envoieDonnees(bande);}, 3000);
+	intervalID = window.setInterval(function(){envoieDonnees(bande);}, 1000);
 }
 
 function envoieDonnees(bande){
@@ -107,7 +123,33 @@ function printtest(){
 	document.getElementById("test").innerHTML = document.getElementById("content").innerHTML
 }
 
-document.getElementById("runButton").onclick = function(){runbuttonfunc("400,500");}
-document.getElementById("runButton2").onclick = function(){runbuttonfunc("800,900");}
-document.getElementById("runButton3").onclick = function(){runbuttonfunc("2400,2500");}
+function addCharts(nbtab){  //on crée les elements html pour afficher les graphs
+	for(var i=0; i<nbtab;i++){
+		// crée un nouvel élément span 
+		newSpan[i] = document.createElement("span");
+		// ajoute le nouvel élément créé dans le doc au niveau de body
+		document.body.appendChild(newSpan[i]);
+	}
+}
+
+function removeCharts(){ //on efface tous les graphs
+	var elem = null;
+	var parent = null;
+	for(var i=0; i<8; i++){   //8 correspond au nombre max de nb_bande
+		if(newSpan[i] != null){
+			elem = newSpan[i];
+			parent = document.body;
+			parent.removeChild(elem);
+			newSpan[i] = null;
+		}
+	}
+}
+
+
+document.getElementById("runButton").onclick = function(){runbuttonfunc("400-500");}
+document.getElementById("runButton2").onclick = function(){runbuttonfunc("800-900");}
+document.getElementById("runButton3").onclick = function(){runbuttonfunc("2400-2500");}
+document.getElementById("runButton4").onclick = function(){runbuttonfunc("WiFi");}
+document.getElementById("runButton5").onclick = function(){runbuttonfunc("ZigBee");}
+document.getElementById("runButton6").onclick = function(){runbuttonfunc("Bluetooth/BLE");}
 
