@@ -17,17 +17,18 @@ class TestHandler(http.server.SimpleHTTPRequestHandler):
 		print(self.headers.get_all('content-length'))
 		data_string = (self.rfile.read(length)).decode("utf-8")
 		print(data_string)
-		tab = charge_fichier()
+		tab,week_day,sin_time,cos_time = charge_fichier()
+		print(cos_time)
 		print(tab)
 		"""print(tab)"""
 		self.send_response(200)
 		self.send_header("Content-type", "text/plain")
 		self.end_headers()
 		self.flush_headers()
-		json = createJson(tab,data_string)			
+		json = createJson(tab,data_string,week_day,sin_time,cos_time)			
 		self.wfile.write(str(json).encode())
 
-def createJson(tab, data):
+def createJson(tab, data,week_day,sin_time,cos_time):
 	index = -1
 	nb_bande = -1
 	if(data == "400-500"):
@@ -49,7 +50,7 @@ def createJson(tab, data):
 		index = 4
 		nb_bande = 8
 
-	json = '{"nbtab":'+str(nb_bande)+', "tabs":['
+	json = '{"nbtab":'+str(	nb_bande)+', "tabs":['
 
 	for i in range(nb_bande):
 		val_max = abs(round(float(tab[index][1]),2))
@@ -66,10 +67,7 @@ def createJson(tab, data):
 		elif((data == "ZigBee") | (data == "Bluetooth/BLE")):
 			index = index + 2
 	
-	json = json + ']}'
-
-	"""json = '{"nbtab":1, "tabs":[ ['+str(val_max) +','+str(val_min)+','+str(val_mean)+','+str(val_median)+','+str(val_std)+','+str(val_sum)+']]}'"""
-	"""nbtab correspond au nombre de bandes de fréquences différente"""
+	json = json + '],"week_day":'+str(week_day)+',"cos_time":'+str(cos_time)+',"sin_time":'+str(sin_time)+'}'
 
 	return json
 
@@ -88,20 +86,28 @@ def charge_fichier():
 	tab_mots1 = demi_fichier[1].split(" ")
 	colonnes = 7
 	tab = [[-1] * colonnes for _ in range(nb_features)]
-	index = 3
+	index = 0
+	week_day = tab_mots1[index]
+	index = index + 1
+	sin_time = tab_mots1[index]
+	index = index + 1
+	cos_time = tab_mots1[index]
+	index = index + 1
 	""" index dans le fichier """
 	for i in range(nb_features):
+		"""ici on recupere les différentes bandes de fréquences"""
 		bande = tab_mots0[index].split("-")
 		tab[i][0] = bande[0]
 		index = index + 6
 	index = 3
 	""" index dans le fichier """
 	for i in range(nb_features):
+		"""ici on recupere les valeurs"""
 		for j in range(6):
 			tab[i][j+1] = tab_mots1[index]
 			index = index+1
 			"""pour pas commencer à 0 : correspond : 0 --> 400,500 ..."""
 	fichier.close()
-	return tab
+	return (tab,week_day,sin_time,cos_time)
 
 start_server()

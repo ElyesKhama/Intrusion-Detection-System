@@ -1,7 +1,7 @@
 var intervalID;
 
-var margin = {top: 100, right: 100, bottom: 100, left: 100},
-				width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
+var margin = {top: 105, right: 105, bottom: 105, left: 105},
+				width = Math.min(550, window.innerWidth - 10) - margin.left - margin.right,
 				height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
 
 var data = [];
@@ -24,7 +24,7 @@ var radarChartOptions = {   //options for radar
 	margin: margin,
 	maxValue: 0.5,
 	levels: 10,
-	roundStrokes: true,
+	roundStrokes: true,  //TODO: a voir ce qu'ils préfèrent
 	color: color
 };
 			//Call function to draw the Radar chart
@@ -51,10 +51,13 @@ function xml_http_post(url, datas) {
 					{axis:"Max",value: obj['tabs'][i][0]},
 					{axis:"Min",value: obj['tabs'][i][1]},
 					{axis:"Mean",value: obj['tabs'][i][2]},
-					{axis:"Median",value: obj['tabs'][i][3]},
-					{axis:"Std",value: obj['tabs'][i][4]},
-					{axis:"Sum",value: obj['tabs'][i][5]}
+					{axis:"Median",value: obj['tabs'][i][3]}   // ,
+				//	{axis:"Std",value: obj['tabs'][i][4]},
+				//	{axis:"Sum",value: obj['tabs'][i][5]}
 				  ] ;
+				if(obj['tabs'][i][0] < 45){
+					alert(obj['tabs'][i][0],obj.week_day,obj.cos_time,obj.sin_time);
+				}
 			}
 			if (compteur < 10){
 				for(var i=0;i<nbtab;i++){
@@ -112,15 +115,11 @@ function runbuttonfunc(bande) {		//clique du bouton
 	resetColor();
 	removeCharts();
 	window.clearInterval(intervalID);
-	intervalID = window.setInterval(function(){envoieDonnees(bande);}, 1000);
+	intervalID = window.setInterval(function(){envoieDonnees(bande);}, 4000);
 }
 
 function envoieDonnees(bande){
 	xml_http_post("frontend.html", bande);
-}
-
-function printtest(){
-	document.getElementById("test").innerHTML = document.getElementById("content").innerHTML
 }
 
 function addCharts(nbtab){  //on crée les elements html pour afficher les graphs
@@ -128,8 +127,18 @@ function addCharts(nbtab){  //on crée les elements html pour afficher les graph
 		// crée un nouvel élément span 
 		newSpan[i] = document.createElement("span");
 		// ajoute le nouvel élément créé dans le doc au niveau de body
-		document.body.appendChild(newSpan[i]);
+		var baliseJournal = document.getElementById("journal");
+		document.body.insertBefore(newSpan[i],baliseJournal);
 	}
+}
+
+function alert(max,week_day,cos_time,sin_time){
+	var newDiv = document.createElement("div");
+	var texte = document.createTextNode("Valeur : "+max + "- Le jour n° : "+week_day +" à : cos_time : "+cos_time+" et sin_time : "+sin_time);
+	newDiv.appendChild(texte);
+	var baliseAlertes = document.getElementById("alertes");
+	document.body.insertBefore(newDiv,baliseAlertes);
+	newDiv.style.textAlign = "left";
 }
 
 function removeCharts(){ //on efface tous les graphs
