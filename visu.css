@@ -22,4 +22,6 @@ body {
 #journal,#alertes{
 	color:red;
 	text-align: left;
+	background-color: white;
+	font-size: 15px;
 }

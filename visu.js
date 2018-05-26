@@ -1,4 +1,4 @@
-function RadarChart(id, data, options) {
+function RadarChart(id, data, options,bande) {
 	var cfg = {
 	 w: 600,				//Width of the circle
 	 h: 600,				//Height of the circle
@@ -50,7 +50,14 @@ function RadarChart(id, data, options) {
 			.attr("class", "radar"+id);
 	//Append a g element
 	var g = svg.append("g")
-			.attr("transform", "translate(" + (cfg.w/2 + cfg.margin.left) + "," + (cfg.h/2 + cfg.margin.top) + ")");
+			.attr("transform", "translate(" + (cfg.w/2 + cfg.margin.left) + "," + (cfg.h/2 + cfg.margin.top) + ")")
+			.style("stroke", "white") ;
+
+    svg.append("text")
+    .attr("x", cfg.margin.right )
+    .attr("y", cfg.margin.top)
+	.style("stroke","blue")
+    .text(bande);
 
 	/////////////////////////////////////////////////////////
 	////////// Glow filter for some extra pizzazz ///////////
@@ -92,7 +99,7 @@ function RadarChart(id, data, options) {
 	   .attr("dy", "0.4em")
 	   .style("font-size", "10px")
 	   .attr("fill", "#737373")
-	   .text(function(d,i) { return Format(maxValue * d/cfg.levels); });
+	   .text(function(d,i) { return precisionRound(maxValue * d/cfg.levels,0); });
 
 	/////////////////////////////////////////////////////////
 	//////////////////// Draw the axes //////////////////////
@@ -263,5 +270,10 @@ function RadarChart(id, data, options) {
 		}
 	  });
 	}//wrap
+	
+	function precisionRound(number, precision) {
+	  var factor = Math.pow(10, precision);
+ 	return Math.round(number * factor) / factor;
+}
 
 }//RadarChart

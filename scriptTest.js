@@ -17,13 +17,14 @@ var selectButton = 0;
 var first;
 var radarChart = [];
 var newSpan = [];
+var bande = [];
 
 var radarChartOptions = {   //options for radar
 	w: width,
 	h: height,
 	margin: margin,
 	maxValue: 0.5,
-	levels: 10,
+	levels: 6,
 	roundStrokes: true,  //TODO: a voir ce qu'ils préfèrent
 	color: color
 };
@@ -55,8 +56,10 @@ function xml_http_post(url, datas) {
 				//	{axis:"Std",value: obj['tabs'][i][4]},
 				//	{axis:"Sum",value: obj['tabs'][i][5]}
 				  ] ;
+				bande[i] = obj['tabs'][i][6]+"<-->"+obj['tabs'][i][7];
+				console.log(bande[i]);
 				if(obj['tabs'][i][0] < 45){
-					alert(obj['tabs'][i][0],obj.week_day,obj.cos_time,obj.sin_time);
+					alertJournal(obj['tabs'][i][0],obj.week_day,obj.cos_time,obj.sin_time);
 				}
 			}
 			if (compteur < 10){
@@ -76,12 +79,25 @@ function xml_http_post(url, datas) {
 			radarChartOptions.color = d3.scale.ordinal().range(listcolor);
 			for(var i=0; i<nbtab; i++){
 				//RadarChart(radarChart[i], data[i], radarChartOptions);
-				RadarChart(newSpan[i], data[i], radarChartOptions);
+				RadarChart(newSpan[i], data[i], radarChartOptions,bande[i]);
 			}
 			first = false;
 			}
 	}
 req.send(datas);
+}
+
+function addTitle2(id,bande){
+	var svg = d3.select(id).select("svg");
+	svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")
+		.style("color","white")
+        .text("Value vs Date Graph");
+
 }
 
 function resetColor(){
@@ -132,13 +148,22 @@ function addCharts(nbtab){  //on crée les elements html pour afficher les graph
 	}
 }
 
-function alert(max,week_day,cos_time,sin_time){
+function alertJournal(max,week_day,cos_time,sin_time){
 	var newDiv = document.createElement("div");
 	var texte = document.createTextNode("Valeur : "+max + "- Le jour n° : "+week_day +" à : cos_time : "+cos_time+" et sin_time : "+sin_time);
 	newDiv.appendChild(texte);
 	var baliseAlertes = document.getElementById("alertes");
 	document.body.insertBefore(newDiv,baliseAlertes);
 	newDiv.style.textAlign = "left";
+}
+
+function addTitle(bande){
+	var newDiv = document.createElement("div");
+	var texte = document.createTextNode(bande);
+	newDiv.appendChild(texte);
+	var baliseJournal = document.getElementById("journal");
+	document.body.insertBefore(newDiv,baliseJournal);
+
 }
 
 function removeCharts(){ //on efface tous les graphs

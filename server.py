@@ -53,13 +53,17 @@ def createJson(tab, data,week_day,sin_time,cos_time):
 	json = '{"nbtab":'+str(	nb_bande)+', "tabs":['
 
 	for i in range(nb_bande):
+		test = "je test cette suite"
+		val_bande = tab[index][0].split(",")
+		val_bande1 = val_bande[0] 
+		val_bande2 = val_bande[1] 
 		val_max = abs(round(float(tab[index][1]),2))
 		val_min = abs(round(float(tab[index][2]),2))
 		val_mean = abs(round(float(tab[index][3]),2))
 		val_median = abs(round(float(tab[index][4]),2))
 		val_std = abs(round(float(tab[index][5]),2))
 		val_sum = abs(round(float(tab[index][6]),2)/1000000)
-		json = json + '['+str(val_max) +','+str(val_min)+','+str(val_mean)+','+str(val_median)+','+str(val_std)+','+str(val_sum)+']'
+		json = json + '['+str(val_max) +','+str(val_min)+','+str(val_mean)+','+str(val_median)+','+str(val_std)+','+str(val_sum)+','+ str(val_bande1)+','+str(val_bande2)+']'
 		if(i != nb_bande-1):
 			json = json + ','
 		if(data == "WiFi"):
