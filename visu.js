@@ -56,7 +56,8 @@ function RadarChart(id, data, options,bande) {
     svg.append("text")
     .attr("x", cfg.margin.right )
     .attr("y", cfg.margin.top)
-	.style("stroke","blue")
+	.style("stroke","white")
+	.style("text-decoration","underline")
     .text(bande);
 
 	/////////////////////////////////////////////////////////

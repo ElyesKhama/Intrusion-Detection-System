@@ -1,0 +1,50 @@
+Hello,
+
+Petite explication du code et du fonctionnement pour le rapport :
+
+Dépôt git : https://github.com/ElyesKhama/Intrusion-Detection-System.git
+
+Je vous conseille deja de regarder le code et d'essayer de comprendre ce que vous pouvez dans un premier temps.
+
+Technos utilisées : HTML/CSS pour la base du site - JavaScript pour l'affichage du graphe + Actions des boutons - Python pour le server et le script qui genere les valeurs
+
+Fichiers : 
+
+	-	visu.html : Fond de la page web qui intégre le css et les 2 javascripts, rien de compliqué, les différents boutons sont définis ainsi que l'emplacement pour les alertes et le journal
+	-	visu.css	: Forme de la page web, couleurs, graphismes...
+	-	server.py	: 	Le serveur python à lancer pour accéder au site (port 8000) --> recupere les requetes lancées en http et execute la fonction do_POST dès qu'il recoit une requete (toutes les 4s)
+						Il recupere le string recu qui correspond à la bande/protocole que l'utilisateur désire
+						Il charge le fichier data.txt qui contient l'entete avec toutes les bandes puis un seul interval de valeurs pour toutes les bandes
+						Crée le document JSON pour l'envoie des données (regardez à quoi il correspond dans le fichier si vous comprenez pas dites moi)
+						Retourne le json 
+	-	scriptLoadData.py : Simple script python qui prend les valeurs de data50.txt (j'en ai mis 50 on peut en mettre plus si besoin pcq le fichier de 1,6Go est long à charger..) et toutes les 4 secondes écrit dans data.txt
+	-	visu.js		: JavaScript qui contient tout le code pour les graphiques (récupére de d3.js) que j'ai modifié uniquement pour l'aspect graphique (couleurs, emplacement...)
+	-	scriptChart.js : JavaScript qui s'occupe de toutes la partie fonctionnelle (voir Principe de fonctionnement)
+	-	data50.txt : données
+	-	data.txt	: données
+
+Principe de fonctonnement : 
+	On lance le server.py et le scriptLoadData.py
+	On va sur le site en localhost:8000/visu.html
+	On arrive sur la page avec les différents boutons d'affichés 
+	Lorsqu'on clique sur un bouton :
+		On va reset les couleurs + tous les graphes qui pourraient etre présents et on commence à envoyer une requete au server toutes les 4 secondes (setInterval)
+		Le scriptChart.js a le code pour l'execution de toutes les fonctions.
+		Une requete est envoyée au server.py. exemple si on a cliqué sur "400-500" il va envoyé une requete avec 400-500 en data(string)
+		Le server recup la requete et renvoie le fichier json au javascript (regardez plus en détail comment il le crée par rapport a ce qu'il a recu + ce qu'il y a dans le fichier)
+		Une fois le JSON récupéré, on le parse
+			on recupere nbtab qui va servir a determiner combien de graphiques sont à afficher
+			on prépare une seule fois l'emplacement de tous les graphiques (création des éléments HTML via le JS)
+			on crée tous les objets pour les graphiques (listobjet)
+				pour les prochaines valeurs, la couleur des derniers va aller va le blanc et celle du nouveau est bleu 
+				on crée le(s) graphique(s) qui vont se mettre aux emplacements précedemments crées
+	Donc toutes les 4secondes (demandé par les profs) les valeurs changent et si on rappuie sur le bouton les graphes se réinitialisent
+					
+Il y a pas mal de fonctions pour gerer l'aspect graphique : affichage/désaffichage + création/suppression des éléments HTML via le JS. Rien de compliqué il faut juste savoir quelle méthode correspond à quoi (google is your friend)
+
+Pour ce qui est des alertes : je me suis focalisé sur l'aspect temps réel, donc si on a la vue sur un graph et qu'une valeur n'est pas bonne cela mets une alerte avec la valeur + jour + heure(sin.cos à changer de que je sais comment faire)
+
+
+
+Si vous avez des questions hésitez pas, je suis pas trop motivé pour le rapport comme j'ai passé pas mal (beaucoup++) de temps sur l'appli, mais si vous bloquez ou savez pas comment expliquer un truc dites moi !
+Elyes

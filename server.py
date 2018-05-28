@@ -71,8 +71,21 @@ def createJson(tab, data,week_day,sin_time,cos_time):
 		elif((data == "ZigBee") | (data == "Bluetooth/BLE")):
 			index = index + 2
 	
-	json = json + '],"week_day":'+str(week_day)+',"cos_time":'+str(cos_time)+',"sin_time":'+str(sin_time)+'}'
+	json = json + '],"week_day":'+str(week_day)+',"cos_time":'+str(cos_time)+',"sin_time":'+str(sin_time)
 
+
+	json = json + ',"tabAlertes":['
+	fichier = open("./alert.txt","r")
+	nbalertes = 0
+	for line in fichier:
+		nbalertes +=1
+		line = line[:-1]
+		mot = line.split(" ")
+		json = json + '['+str(mot[0])+','+str(mot[1])+','+str(mot[2])+','+str(mot[3])+','+str(mot[4])+','+str(mot[5])+'],'
+	if(nbalertes>0):
+		json = json[:-1]
+	json = json + '],"nbalertes":'+ str(nbalertes)
+	json = json + '}'
 	return json
 
 def start_server():	
@@ -112,6 +125,20 @@ def charge_fichier():
 			index = index+1
 			"""pour pas commencer à 0 : correspond : 0 --> 400,500 ..."""
 	fichier.close()
+	check_alert(tab_mots1,tab_mots0)
 	return (tab,week_day,sin_time,cos_time)
+
+def check_alert(tab,tab_bande):
+	fichier = open("./alert.txt","w")
+	index = 3
+	index_bande = 3
+	for i in range(nb_features):
+		if(abs(float(tab[index]))<45):
+			bande_max = tab_bande[index_bande].split("-")
+			bande = bande_max[0].split(",")
+			max = abs(round(float(tab[index]),2))
+			fichier.write(str(max)+" "+tab[0]+" "+tab[1]+" "+tab[2]+" "+bande[0]+" "+bande[1]+"\n")
+		index = index + 6
+		index_bande = index_bande + 6
 
 start_server()

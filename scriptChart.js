@@ -58,9 +58,6 @@ function xml_http_post(url, datas) {
 				  ] ;
 				bande[i] = obj['tabs'][i][6]+"<-->"+obj['tabs'][i][7];
 				console.log(bande[i]);
-				if(obj['tabs'][i][0] < 45){
-					alertJournal(obj['tabs'][i][0],obj.week_day,obj.cos_time,obj.sin_time);
-				}
 			}
 			if (compteur < 10){
 				for(var i=0;i<nbtab;i++){
@@ -76,6 +73,7 @@ function xml_http_post(url, datas) {
 					data[i].push(listobjet[i]);
 				}
 			}
+			writeHistorique(obj.nbalertes,obj.tabAlertes);
 			radarChartOptions.color = d3.scale.ordinal().range(listcolor);
 			for(var i=0; i<nbtab; i++){
 				//RadarChart(radarChart[i], data[i], radarChartOptions);
@@ -85,6 +83,19 @@ function xml_http_post(url, datas) {
 			}
 	}
 req.send(datas);
+}
+
+function writeHistorique(nbalertes, tab){
+	var i;	
+	for(i=0;i<nbalertes;i++){
+		var newDiv = document.createElement("div");
+		var texte = document.createTextNode("Valeur : "+tab[i][0] + "- Le jour n° : "+tab[i][1] +" à : cos_time : "+tab[i][2]+" et sin_time : "+tab[i][3]+"sur la bande :"+tab[i][4]+"-"+tab[i][5]);
+		newDiv.appendChild(texte);
+		var baliseAlertes = document.getElementById("alertes");
+		console.log("aaaaaaaa");
+		document.body.insertBefore(newDiv,baliseAlertes);
+		newDiv.style.textAlign = "left";
+	}
 }
 
 function addTitle2(id,bande){
@@ -146,15 +157,6 @@ function addCharts(nbtab){  //on crée les elements html pour afficher les graph
 		var baliseJournal = document.getElementById("journal");
 		document.body.insertBefore(newSpan[i],baliseJournal);
 	}
-}
-
-function alertJournal(max,week_day,cos_time,sin_time){
-	var newDiv = document.createElement("div");
-	var texte = document.createTextNode("Valeur : "+max + "- Le jour n° : "+week_day +" à : cos_time : "+cos_time+" et sin_time : "+sin_time);
-	newDiv.appendChild(texte);
-	var baliseAlertes = document.getElementById("alertes");
-	document.body.insertBefore(newDiv,baliseAlertes);
-	newDiv.style.textAlign = "left";
 }
 
 function addTitle(bande){
