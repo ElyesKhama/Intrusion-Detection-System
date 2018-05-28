@@ -17,6 +17,7 @@ var selectButton = 0;
 var first;
 var radarChart = [];
 var newSpan = [];
+var newAlert = [];
 var bande = [];
 
 var radarChartOptions = {   //options for radar
@@ -88,13 +89,12 @@ req.send(datas);
 function writeHistorique(nbalertes, tab){
 	var i;	
 	for(i=0;i<nbalertes;i++){
-		var newDiv = document.createElement("div");
+		newAlert[i] = document.createElement("div");
 		var texte = document.createTextNode("Valeur : "+tab[i][0] + "- Le jour n° : "+tab[i][1] +" à : cos_time : "+tab[i][2]+" et sin_time : "+tab[i][3]+"sur la bande :"+tab[i][4]+"-"+tab[i][5]);
-		newDiv.appendChild(texte);
+		newAlert[i].appendChild(texte);
 		var baliseAlertes = document.getElementById("alertes");
-		console.log("aaaaaaaa");
-		document.body.insertBefore(newDiv,baliseAlertes);
-		newDiv.style.textAlign = "left";
+		document.body.insertBefore(newAlert[i],baliseAlertes);
+		newAlert[i].style.textAlign = "left";
 	}
 }
 
@@ -108,7 +108,6 @@ function addTitle2(id,bande){
         .style("text-decoration", "underline")
 		.style("color","white")
         .text("Value vs Date Graph");
-
 }
 
 function resetColor(){
@@ -140,7 +139,7 @@ function prepareChart(nbtab){
 function runbuttonfunc(bande) {		//clique du bouton
 	first = true;
 	resetColor();
-	removeCharts();
+	removeCharts(newSpan);
 	window.clearInterval(intervalID);
 	intervalID = window.setInterval(function(){envoieDonnees(bande);}, 4000);
 }
@@ -165,20 +164,25 @@ function addTitle(bande){
 	newDiv.appendChild(texte);
 	var baliseJournal = document.getElementById("journal");
 	document.body.insertBefore(newDiv,baliseJournal);
-
 }
 
-function removeCharts(){ //on efface tous les graphs
+function removeCharts(tab){ //on efface tous les graphs
 	var elem = null;
 	var parent = null;
-	for(var i=0; i<8; i++){   //8 correspond au nombre max de nb_bande
-		if(newSpan[i] != null){
-			elem = newSpan[i];
+	console.log(tab.length);
+	for(var i=0; i<500; i++){   //8 correspond au nombre max de nb_bande
+		if(tab[i] != null){
+			elem = tab[i];
 			parent = document.body;
 			parent.removeChild(elem);
-			newSpan[i] = null;
+			tab[i] = null;
 		}
+			console.log(tab.length);
 	}
+}
+
+function clearAlertsFunc(){
+	removeCharts(newAlert);
 }
 
 
@@ -188,4 +192,5 @@ document.getElementById("runButton3").onclick = function(){runbuttonfunc("2400-2
 document.getElementById("runButton4").onclick = function(){runbuttonfunc("WiFi");}
 document.getElementById("runButton5").onclick = function(){runbuttonfunc("ZigBee");}
 document.getElementById("runButton6").onclick = function(){runbuttonfunc("Bluetooth/BLE");}
+document.getElementById("ButtonClearAlert").onclick =  function(){clearAlertsFunc();}
 
