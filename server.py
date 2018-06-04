@@ -71,7 +71,7 @@ def createJson(tab, data,week_day,sin_time,cos_time):
 		elif((data == "ZigBee") | (data == "Bluetooth/BLE")):
 			index = index + 2
 	
-	json = json + '],"week_day":'+str(week_day)+',"cos_time":'+str(cos_time)+',"sin_time":'+str(sin_time)
+	json = json + ']'
 
 
 	json = json + ',"tabAlertes":['

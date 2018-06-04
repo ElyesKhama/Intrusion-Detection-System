@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/ >
-		<title>Visualisation des données de la sonde</title>
+		<title>Charts of the data received by the probe</title>
 		<!-- Google fonts -->
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
 		<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
@@ -13,19 +13,21 @@
 	</head>
 
 	<body>
-	<h1> Graphique des données reçues par la sonde : </h1>
+	<h1> Intrusion Detection System </h1>
+	<div id="heure"></div>
 	<button id="runButton">400-500</button>
 	<button id="runButton2">800-900</button>
 	<button id="runButton3">2400-2500</button>
 	<button id="runButton4">WiFi</button>
 	<button id="runButton5">ZigBee</button>
 	<button id="runButton6">Bluetooth/BLE</button>
-
-
-	<div id="content">
-		Json ... 
+	</br>
+	<button id="display">Change Display</button>
+	<div id="content"> 
 	</div>
-	<div id="journal"> Journal des alertes 	
+
+	<span> </br> </br> </span>
+	<div id="journal"> Alert log
 		<button id="ButtonClearAlert">Clear</button> </br> 
 		</div>
 	<div id="alertes"></div>

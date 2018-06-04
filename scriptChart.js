@@ -19,6 +19,9 @@ var radarChart = [];
 var newSpan = [];
 var newAlert = [];
 var bande = [];
+var changedisplay = false;
+var display = 0;  //0 : 6 axes - 1 : 4 axes
+
 
 var radarChartOptions = {   //options for radar
 	w: width,
@@ -38,7 +41,7 @@ function xml_http_post(url, datas) {
 	req.open("POST", url, true);
 	req.onreadystatechange = function() {
 		if (req.readyState == 4) {
-			document.getElementById("content").innerHTML=req.responseText;  //pour le test d'affichage dans balise
+		//	document.getElementById("content").innerHTML=req.responseText;  //pour le test d'affichage dans balise
 			var jsonRecu = req.responseText;				//tout ce qu'on reçoit : le json
 			obj = JSON.parse(jsonRecu);
 			var nbtab = obj.nbtab;			//ici je recupere le nombre de tableaux qui vont devenir différents graphiques
@@ -53,12 +56,22 @@ function xml_http_post(url, datas) {
 					{axis:"Max",value: obj['tabs'][i][0]},
 					{axis:"Min",value: obj['tabs'][i][1]},
 					{axis:"Mean",value: obj['tabs'][i][2]},
-					{axis:"Median",value: obj['tabs'][i][3]}   // ,
-				//	{axis:"Std",value: obj['tabs'][i][4]},
-				//	{axis:"Sum",value: obj['tabs'][i][5]}
+					{axis:"Median",value: obj['tabs'][i][3]},
+					{axis:"Std",value: obj['tabs'][i][4]},
+					{axis:"Sum",value: obj['tabs'][i][5]}
 				  ] ;
-				bande[i] = obj['tabs'][i][6]+"<-->"+obj['tabs'][i][7];
-				console.log(bande[i]);
+
+			if(display==1){
+						listobjet[i].pop();
+						listobjet[i].pop();
+			}
+			if(changedisplay){
+					removeCharts(newSpan);
+					resetColor();
+					prepareData(nbtab);
+					addCharts(nbtab);
+				}
+			bande[i] = obj['tabs'][i][6]+"<-->"+obj['tabs'][i][7];
 			}
 			if (compteur < 10){
 				for(var i=0;i<nbtab;i++){
@@ -80,6 +93,7 @@ function xml_http_post(url, datas) {
 				//RadarChart(radarChart[i], data[i], radarChartOptions);
 				RadarChart(newSpan[i], data[i], radarChartOptions,bande[i]);
 			}
+					changedisplay = false;
 			first = false;
 			}
 	}
@@ -90,7 +104,8 @@ function writeHistorique(nbalertes, tab){
 	var i;	
 	for(i=0;i<nbalertes;i++){
 		newAlert[i] = document.createElement("div");
-		var texte = document.createTextNode("Valeur : "+tab[i][0] + "- Le jour n° : "+tab[i][1] +" à : cos_time : "+tab[i][2]+" et sin_time : "+tab[i][3]+"sur la bande :"+tab[i][4]+"-"+tab[i][5]);
+		var heure = getHeure();
+		var texte = document.createTextNode("Value : "+tab[i][0] + " the day n° : "+tab[i][1] +" at : " + heure +" on the frequency bande : "+tab[i][4]+"-"+tab[i][5]);
 		newAlert[i].appendChild(texte);
 		var baliseAlertes = document.getElementById("alertes");
 		document.body.insertBefore(newAlert[i],baliseAlertes);
@@ -141,6 +156,7 @@ function runbuttonfunc(bande) {		//clique du bouton
 	resetColor();
 	removeCharts(newSpan);
 	window.clearInterval(intervalID);
+	envoieDonnees(bande)
 	intervalID = window.setInterval(function(){envoieDonnees(bande);}, 4000);
 }
 
@@ -169,22 +185,47 @@ function addTitle(bande){
 function removeCharts(tab){ //on efface tous les graphs
 	var elem = null;
 	var parent = null;
-	console.log(tab.length);
-	for(var i=0; i<500; i++){   //8 correspond au nombre max de nb_bande
+	for(var i=0; i<5000; i++){   //8 correspond au nombre max de nb_bande
 		if(tab[i] != null){
 			elem = tab[i];
 			parent = document.body;
 			parent.removeChild(elem);
 			tab[i] = null;
 		}
-			console.log(tab.length);
 	}
 }
 
-function clearAlertsFunc(){
+function clearAlertsFunc(){	
 	removeCharts(newAlert);
 }
 
+function changeDisplay(){
+	changedisplay = true;
+	if(display){
+		display = 0;
+	}
+	else{
+		display = 1;
+	}
+}
+
+function getHeure()
+
+{
+	var date = new Date();
+	var heure = date.getHours();
+	var minutes = date.getMinutes();
+	if(minutes < 10)
+	  minutes = "0" + minutes;
+	return heure + "h" + minutes;
+}
+
+function printHeure(){
+	var h = getHeure();
+	window.clearInterval(intervalID);
+	document.getElementById("heure").innerHTML = h ;
+	intervalID2 = window.setInterval(function(){h = getHeure();document.getElementById("heure").innerHTML = h ;}, 500);
+}
 
 document.getElementById("runButton").onclick = function(){runbuttonfunc("400-500");}
 document.getElementById("runButton2").onclick = function(){runbuttonfunc("800-900");}
@@ -193,4 +234,6 @@ document.getElementById("runButton4").onclick = function(){runbuttonfunc("WiFi")
 document.getElementById("runButton5").onclick = function(){runbuttonfunc("ZigBee");}
 document.getElementById("runButton6").onclick = function(){runbuttonfunc("Bluetooth/BLE");}
 document.getElementById("ButtonClearAlert").onclick =  function(){clearAlertsFunc();}
+document.getElementById("display").onclick = function(){changeDisplay();}
+window.onload=printHeure();
 
