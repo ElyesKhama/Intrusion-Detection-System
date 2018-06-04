@@ -47,8 +47,7 @@ function xml_http_post(url, datas) {
 			var nbtab = obj.nbtab;			//ici je recupere le nombre de tableaux qui vont devenir différents graphiques
 			var listobjet = [];
 			if(first == true){
-				 prepareData(nbtab);
-				 //prepareChart(nbtab);
+				prepareData(nbtab);
 				addCharts(nbtab);
 			}
 			for(var i=0;i<nbtab;i++){
@@ -90,10 +89,9 @@ function xml_http_post(url, datas) {
 			writeHistorique(obj.nbalertes,obj.tabAlertes);
 			radarChartOptions.color = d3.scale.ordinal().range(listcolor);
 			for(var i=0; i<nbtab; i++){
-				//RadarChart(radarChart[i], data[i], radarChartOptions);
 				RadarChart(newSpan[i], data[i], radarChartOptions,bande[i]);
 			}
-					changedisplay = false;
+			changedisplay = false;
 			first = false;
 			}
 	}
@@ -102,14 +100,16 @@ req.send(datas);
 
 function writeHistorique(nbalertes, tab){
 	var i;	
+	var alert;
 	for(i=0;i<nbalertes;i++){
-		newAlert[i] = document.createElement("div");
+		alert = document.createElement("div");
+		newAlert.push(alert);
 		var heure = getHeure();
 		var texte = document.createTextNode("Value : "+tab[i][0] + " the day n° : "+tab[i][1] +" at : " + heure +" on the frequency bande : "+tab[i][4]+"-"+tab[i][5]);
-		newAlert[i].appendChild(texte);
+		alert.appendChild(texte);
 		var baliseAlertes = document.getElementById("alertes");
-		document.body.insertBefore(newAlert[i],baliseAlertes);
-		newAlert[i].style.textAlign = "left";
+		document.body.insertBefore(alert,baliseAlertes);
+		alert.style.textAlign = "left";
 	}
 }
 
@@ -185,7 +185,7 @@ function addTitle(bande){
 function removeCharts(tab){ //on efface tous les graphs
 	var elem = null;
 	var parent = null;
-	for(var i=0; i<5000; i++){   //8 correspond au nombre max de nb_bande
+	for(var i=0; i<tab.length; i++){   //8 correspond au nombre max de nb_bande
 		if(tab[i] != null){
 			elem = tab[i];
 			parent = document.body;
@@ -195,8 +195,22 @@ function removeCharts(tab){ //on efface tous les graphs
 	}
 }
 
+function removeAlerts(tab){ //on efface tous les graphs
+	var elem = null;
+	var parent = null;
+	var taille = tab.length;
+	for(var i=0; i<taille; i++){   //8 correspond au nombre max de nb_bande
+			elem = tab[i];
+			parent = document.body;
+			parent.removeChild(elem);
+	}
+	for(var i=0; i<taille; i++){   //8 correspond au nombre max de nb_bande
+			tab.pop();
+	}
+}
+
 function clearAlertsFunc(){	
-	removeCharts(newAlert);
+	removeAlerts(newAlert);
 }
 
 function changeDisplay(){
@@ -210,7 +224,6 @@ function changeDisplay(){
 }
 
 function getHeure()
-
 {
 	var date = new Date();
 	var heure = date.getHours();
