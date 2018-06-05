@@ -86,6 +86,9 @@ function xml_http_post(url, datas) {
 					data[i].push(listobjet[i]);
 				}
 			}
+			if(obj.nbalertes>0){
+            	window.open('popup.html','popAlerte','menubar=no, scrollbars=no, top=100, left=100, width=400, height=200');
+			}
 			writeHistorique(obj.nbalertes,obj.tabAlertes);
 			radarChartOptions.color = d3.scale.ordinal().range(listcolor);
 			for(var i=0; i<nbtab; i++){
